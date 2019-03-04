@@ -1,0 +1,42 @@
+/* jQuery fadeOut replacement */
+
+
+function fade (element, cb) {
+    
+    function innerFade (element, cb) {
+        if (element.length > 1) {
+            element.forEach( (value) => {
+                value.style.opacity -= .008;
+                if (  value.style.opacity <= 0 ) {
+                    value.style.display = 'none';
+                    if (--elementDomNumber === 0) {
+                        cb();
+                        return;
+                    }
+                }
+            });
+            if (elementDomNumber> 0) {
+                window.requestAnimationFrame( ()=> {
+                    innerFade(element, cb);
+                });
+            } 
+        } else {
+            (element[0].style.opacity -= .1 ) < 0 ? cb() : setTimeout(innerFade, 100, element, cb);
+        }
+    }
+
+    let elementDomNumber = 0;
+    const elementDom = document.querySelectorAll(element); 
+
+
+    if (elementDom.length > 1) {
+        
+        elementDomNumber = elementDom.length;
+        elementDom.forEach( (value)=> value.style.opacity = 1 );
+    } else {
+        elementDom[0].style.opacity = 1;
+    }
+
+
+    innerFade(elementDom, cb);
+}
