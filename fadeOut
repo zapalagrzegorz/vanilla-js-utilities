@@ -1,42 +1,57 @@
-/* jQuery fadeOut replacement */
+/* eslint-disable no-unused-vars */
 
 
+/**
+ * Callback for fadeOut
+ *
+ * @callback fadeOutCb
+ */
+
+
+/**
+ * vanilla js of jQuery fadeOut
+ 
+ * @param {string} element - selektor HTMLElement'u, który będzie szukany przez querySelectorAll  
+ * @param {fadeOutCb} cb - funkcja wywołania zwrotnego, gdy już element zniknie 
+ */
 function fade (element, cb) {
-    
-    function innerFade (element, cb) {
-        if (element.length > 1) {
-            element.forEach( (value) => {
-                value.style.opacity -= .008;
-                if (  value.style.opacity <= 0 ) {
-                    value.style.display = 'none';
-                    if (--elementDomNumber === 0) {
-                        cb();
-                        return;
-                    }
-                }
-            });
-            if (elementDomNumber> 0) {
-                window.requestAnimationFrame( ()=> {
-                    innerFade(element, cb);
-                });
-            } 
-        } else {
-            (element[0].style.opacity -= .1 ) < 0 ? cb() : setTimeout(innerFade, 100, element, cb);
+
+    function reduceOpacity (value, cb) {
+        /* co to zwraca ? */
+        /* co robiło return w forEach'u - chyba przejście do kolejnego */
+        value.style.opacity -= .01;
+        if (value.style.opacity <= 0) {
+            value.style.display = 'none';
+            if (--elementDomNumber === 0) {
+                cb();
+                return;
+            }
         }
     }
 
-    let elementDomNumber = 0;
-    const elementDom = document.querySelectorAll(element); 
+    function innerFade (element, cb) {
+        if (element.length) {
 
+            /* forEach przekazuje callbackowi jako pierwszy arg element, aby przekazać inne elementy niż domyślne, trzeba wywołać dalszą funkcję */
 
-    if (elementDom.length > 1) {
-        
-        elementDomNumber = elementDom.length;
-        elementDom.forEach( (value)=> value.style.opacity = 1 );
-    } else {
-        elementDom[0].style.opacity = 1;
+            element.forEach( (value) => reduceOpacity(value, cb));
+            if (elementDomNumber > 0) {
+                window.requestAnimationFrame( () => {
+                    innerFade(element, cb);
+                });
+            } 
+        }
     }
+
+    const elementDom = document.querySelectorAll(element); 
+    elementDom.forEach( value => value.style.opacity = 1 );
+
+    let elementDomNumber = elementDom.length;
 
 
     innerFade(elementDom, cb);
+
+
 }
+
+
