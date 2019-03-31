@@ -18,7 +18,7 @@ function getDateDaysAgo (daysBefore = 7, format) {
 
     const dayAgo = new Date(today.setDate(today.getDate() - daysBefore));
 
-    const date = dayAgo.toLocaleString(navigator.language, dateOptions);
+    const date = dayAgo.toLocaleString('pl', dateOptions);
 
     if (format === 'yyyy-mm-dd') {
 
