@@ -1,0 +1,39 @@
+// https://gomakethings.com/debouncing-your-javascript-events/
+
+/**
+*  * @param  {Function} fn The function to debounce
+*/
+var getDebouncer = function (fn) {
+
+	// Setup a timer
+	var timeout;
+
+	// Return a function to run debounced
+	return function () {
+  
+		// Setup the arguments
+		// var context = this;
+		var args = arguments;
+
+		// If there's a timer, cancel it
+		if (timeout) {
+          console.log('canceling');
+			window.cancelAnimationFrame(timeout);
+		}
+
+		// Setup the new requestAnimationFrame()
+		timeout = window.requestAnimationFrame(function () {
+      	console.log('performing');
+			fn.apply(this, args);
+		});
+
+	}
+
+};
+
+function log () {
+	console.log('debounced function');
+};
+
+
+window.addEventListener('scroll', getDebouncer(log));
